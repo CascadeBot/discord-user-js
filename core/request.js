@@ -24,6 +24,7 @@ const endpoints = {
     }
 };
 
+// TODO move bucket register inside account scope
 const bucketReg = new Map();
 
 function jenerateBucket(depth) {
@@ -58,8 +59,8 @@ function makeRequest(endpoint, options, context) {
     const headers = {
         "Content-Type": "application/json"
     };
-    if (options.botToken)
-        headers["Authorization"] = "Bot " + options.botToken;
+    if (options.bot)
+        headers["Authorization"] = "Bot " + options.bot;
     return new Promise((resolve, reject) => {
         let data = "";
         // TODO add user agent
