@@ -5,18 +5,18 @@ const { HttpError } = require("../core/data/errors");
 const { bucketRegister } = require("../core/data/bucketRegister");
 
 async function retryLogic(cb, ops, amount) {
+    const container = ops.context.containers.get(ops.context.containerId);
+    if (container.globalRate.active !== false) {
+        await container.globalRate.active;
+    }
     try {
         return await cb(ops);
     } catch (error) {
         if (error instanceof HttpError) {
             if (error.code === 429) {
-                console.log("handle ratelimit");
                 if (error.data.body.global === true) {
-                    // TODO add global ratelimit
-                    console.log("429 global ratelimit encountered");
+                    container.startGlobalRatelimit(error.data.body.retry_after);
                 } else {
-                    console.log("429 local ratelimit encountered");
-                    const container = ops.context.containers.get(ops.context.containerId);
                     const bucketId = bucketRegister.get(ops.context.endpointId);
                     container.set(
                         bucketId,

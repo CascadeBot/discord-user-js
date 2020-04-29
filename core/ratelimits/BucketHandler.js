@@ -5,11 +5,7 @@ class BucketHandler {
     constructor() {
         this.bucket = new Map();
         this.globalRate = {
-            // TODO add global ratelimit blocking
-            global: true,
             active: false,
-            reset: 0,
-            remaining: 0,
             queue: []
         };
     }
@@ -73,7 +69,6 @@ class BucketHandler {
                 if (!remaining) remaining = 1;
                 if (!reset) reset = 1;
 
-                console.log("headers", {remaining, reset});
                 bucket = updateBucketRegister(queueItem.id, bucket);
                 self.set(bucket, remaining, reset);
             });
@@ -85,6 +80,16 @@ class BucketHandler {
 
     startGlobalQueue() {
         this.executeGlobalQueue(this.globalRate);
+    }
+
+    startGlobalRatelimit(milliseconds) {
+        this.globalRate.active = new Promise((resolve) => {
+            setTimeout(() => {
+                this.globalRate.active = false;
+                resolve();
+            }, milliseconds);
+        })
+        return this.globalRate.active;
     }
 
     _addToRouterQueue(bucketId, call) {

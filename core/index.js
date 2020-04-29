@@ -4,6 +4,7 @@ const { makeRequest } = require("../request");
 class DiscordRequest {
     constructor() {
         this.ratelimits = new Ratelimits();
+        this.refreshHook = null;
     }
 
     request(endpoint, containerId, options, context) {
@@ -24,6 +25,15 @@ class DiscordRequest {
                 });
             });
         });
+    }
+
+    addHook(event, hook) {
+        if (event === "token-update") {
+            this.refreshHook = hook;
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 
