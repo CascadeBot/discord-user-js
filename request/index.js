@@ -3,6 +3,7 @@ const { startRatelimit } = require("../helpers/sleep");
 const { prepareRequest } = require("./prepare");
 const { HttpError } = require("../core/data/errors");
 const { bucketRegister } = require("../core/data/bucketRegister");
+const { refreshToken } = require("../oauth/refresh");
 
 async function retryLogic(cb, ops, amount) {
     const container = ops.context.containers.get(ops.context.containerId);
@@ -27,10 +28,14 @@ async function retryLogic(cb, ops, amount) {
                 }
                 amount++;
             } else if (error.code === 401 && ops.userDetails) {
-                if (ops.raw.options.userDetails && !ops.context.triedRefresh) {
-                    console.log("handle token refresh");
+                if (ops.raw.options.userDetails && ops.context.triedRefresh !== true) {
+                    const details = await refreshToken(ops.raw.options.userDetails);
+                    if (ops.context.refreshHook) ops.context.refreshHook(details);
+                    ops.raw.options.userDetails = details;
                     ops.context.triedRefresh = true;
                     amount++;
+                } else {
+                    throw error;
                 }
             } else {
                 throw error;

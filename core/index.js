@@ -13,6 +13,7 @@ class DiscordRequest {
                 return makeRequest(endpoint, {
                     ...options
                 }, {
+                    refreshHook,
                     ...context,
                     containerId,
                     endpointId: endpoint.id,
@@ -31,9 +32,8 @@ class DiscordRequest {
         if (event === "token-update") {
             this.refreshHook = hook;
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 }
 
