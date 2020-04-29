@@ -44,10 +44,12 @@ class BucketHandler {
         const self = this;
         if (rate.queue.length <= 0)
             return
-        await rate.queue[0]((remaining, reset, newBucketId, endpointId) => {
-            if (newBucketId) {
-                bucketId = updateBucketRegister(endpointId, newBucketId);
-            }
+        await rate.queue[0]((headers) => {
+            let remaining = headers["x-ratelimit-remaining"];
+            let reset = headers["x-ratelimit-reset"];
+            if (!remaining) remaining = 1;
+            if (!reset) reset = 1;
+
             self.set(bucketId, remaining, reset);
         });
         await startRatelimit(rate);
@@ -71,6 +73,7 @@ class BucketHandler {
                 if (!remaining) remaining = 1;
                 if (!reset) reset = 1;
 
+                console.log("headers", {remaining, reset});
                 bucket = updateBucketRegister(queueItem.id, bucket);
                 self.set(bucket, remaining, reset);
             });

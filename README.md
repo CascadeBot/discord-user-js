@@ -9,7 +9,8 @@ Part of [CascadeBot](https://github.com/CascadeBot/CascadeBot), A modular, costu
  - Discord rest api integration
 
 ## Todo
- - [ ] Ratelimits on 429 (global and local)
+ - [X] Ratelimits on 429 local
+ - [ ] Ratelimits on 429 global
  - [ ] Automatic oauth token refreshing on 401
  - [ ] Oauth change hook
  - [ ] More endpoints

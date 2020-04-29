@@ -1,10 +1,10 @@
-const { errIdGenFailed } = require("./errors");
+const { errors } = require("./errors");
 
 const bucketRegister = new Map();
 
 function jenerateBucket(depth) {
     if (!depth) depth = 0;
-    if (depth > 20) throw errIdGenFailed;
+    if (depth > 20) throw new Error(errors.errIdGenFailed);
     const random = "---" + Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
     const values = bucketRegister.values();
     for (let val of values) {

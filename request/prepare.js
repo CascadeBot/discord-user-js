@@ -33,6 +33,7 @@ function prepareRequest(endpoint, options, context) {
             path: `/api/v${discordApiVersion}${path}`,
             method: endpoint.method,
         },
+        retries: 5,
         context,
         body,
     }
