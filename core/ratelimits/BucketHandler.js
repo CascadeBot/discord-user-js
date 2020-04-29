@@ -1,23 +1,7 @@
-const { bucketReg, jenerateBucket } = require("./request");
+const { bucketRegister, updateBucketRegister } = require("../data/bucketRegister");
+const { startRatelimit } = require("../../helpers/sleep");
 
-function sleep(timeMilliseconds) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve();
-        }, timeMilliseconds);
-    });
-}
-
-async function startRatelimit(rate) {
-    if (rate.remaining <= 0) {
-        const timeout = rate.reset - Math.round(new Date().getTime() / 1000);
-        if (timeout > 0) {
-            await sleep(timeout * 1000);
-        }
-    }
-}
-
-class RequestBucket {
+class BucketHandler {
     constructor() {
         this.bucket = new Map();
         this.globalRate = {
@@ -60,7 +44,10 @@ class RequestBucket {
         const self = this;
         if (rate.queue.length <= 0)
             return
-        await rate.queue[0]((remaining, reset) => {
+        await rate.queue[0]((remaining, reset, newBucketId, endpointId) => {
+            if (newBucketId) {
+                bucketId = updateBucketRegister(endpointId, newBucketId);
+            }
             self.set(bucketId, remaining, reset);
         });
         await startRatelimit(rate);
@@ -74,20 +61,17 @@ class RequestBucket {
         if (rate.queue.length <= 0)
             return
         const queueItem = rate.queue[0];
-        if (bucketReg.has(queueItem.id)) {
-            this._addToRouterQueue(bucketReg.get(queueItem.id), queueItem.call);
+        if (bucketRegister.has(queueItem.id)) {
+            this._addToRouterQueue(bucketRegister.get(queueItem.id), queueItem.call);
         } else {
             await queueItem.call((headers) => {
                 let remaining = headers["x-ratelimit-remaining"];
                 let reset = headers["x-ratelimit-reset"];
                 let bucket = headers["x-ratelimit-bucket"];
-                if (!bucket) bucket = jenerateBucket();
                 if (!remaining) remaining = 1;
-                if (!reset) remaining = 1;
+                if (!reset) reset = 1;
 
-                if (!bucketReg.has(queueItem.id)) {
-                    bucketReg.set(queueItem.id, bucket);
-                }
+                bucket = updateBucketRegister(queueItem.id, bucket);
                 self.set(bucket, remaining, reset);
             });
         }
@@ -121,33 +105,12 @@ class RequestBucket {
     }
 
     addToQueue(endpointId, call) {
-        if (bucketReg.has(endpointId))
-            return this._addToRouterQueue(bucketReg.get(endpointId), call);
+        if (bucketRegister.has(endpointId))
+            return this._addToRouterQueue(bucketRegister.get(endpointId), call);
         return this._addtoGlobalQueue(call, endpointId);
     }
 }
 
-class Ratelimits {
-    constructor() {
-        this.bucket = new Map();
-        this.global = false;
-    }
-
-    getBucket(userId) {
-        const value = this.bucket.get(userId);
-        if (typeof value === "undefined") {
-            const newMap = new RequestBucket();
-            this.bucket.set(userId, newMap);
-            return this.bucket.get(userId);
-        }
-        return value;
-    }
-
-    get(userId) {
-        return this.getBucket(userId);
-    }
-}
-
 module.exports = {
-    Ratelimits
-};
+    BucketHandler
+}

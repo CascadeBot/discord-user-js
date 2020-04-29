@@ -1,5 +1,5 @@
 const req = require("../core");
-const { endpoints } = require("../core/request");
+const { endpoints } = require("../core/data/request");
 
 const scopeList = {
     identify: "identify"
@@ -40,7 +40,7 @@ class DiscordUser {
             return false;
         if (!this.scopes.includes(scopeList.identify))
             return false;
-        return req.request(endpoints.userMe, {
+        return req.request(endpoints.userMe, this.details.userId, {
             userDetails: this.details
         }, this._makeContext());
     }
