@@ -3,11 +3,11 @@ const { endpoints } = require("../core/data/endpoints");
 
 class DiscordBot {
     /* SETUP */
-    constructor(botToken, botId) {
+    constructor(botToken, userId) {
         this.token = botToken;
         this.botId = null;
-        if (botId)
-            this.botId = botId;
+        if (userId)
+            this.botId = userId;
     }
 
     _makeContext() {
@@ -17,8 +17,19 @@ class DiscordBot {
         };
     }
 
+    /* root functions */
     addHook(event, hook) {
         return false;
+    }
+
+    async setup() {
+        try {
+            const res = await makeOauthRequest(endpoints.userMe, {}, this._makeContext());
+            this.details.userId = res.body.id;
+            return true;
+        } catch (e) {
+            return false;
+        }
     }
 
     /* endpoints */

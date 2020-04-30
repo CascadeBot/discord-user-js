@@ -54,11 +54,13 @@ class DiscordUser {
             return false;
         }
         if (context.refreshHook) {
-            const hookRes = context.refreshHook(this.details);
-            if (hookRes instanceof Promise) {
-                try {
-                    await hookRes;
-                } catch (e) {}
+            try {
+                const hookRes = context.refreshHook(this.details);
+                if (hookRes instanceof Promise) {
+                        await hookRes;
+                }
+            } catch (e) {
+                return false;
             }
         }
         return this.details;
@@ -77,7 +79,7 @@ class DiscordUser {
     }
 
     /* root functions */
-    async setupUser() {
+    async setup() {
         try {
             const res = await makeOauthRequest(endpoints.userMe, {}, this._makeContext());
             this.details.userId = res.body.id;
