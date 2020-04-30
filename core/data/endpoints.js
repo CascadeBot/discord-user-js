@@ -27,7 +27,18 @@ const endpoints = {
         path: "/token/revoke",
         method: "POST",
         id: "5"
-    }
+    },
+    getGuild: {
+        path: "/guilds/:guildId:?with_counts=:withCounts:",
+        params: ["guildId", "withCounts"],
+        method: "GET",
+        id: "6"
+    },
+    userGuilds: {
+        path: "/users/@me/guilds",
+        method: 'GET',
+        id: "7"
+    },
 };
 
 module.exports = {

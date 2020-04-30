@@ -5,7 +5,8 @@ const { refreshToken } = require("../oauth/refresh");
 const { revokeToken } = require("../oauth/revoke");
 
 const scopeList = {
-    identify: "identify"
+    identify: "identify",
+    guilds: "guilds"
 };
 
 class DiscordUser {
@@ -134,6 +135,11 @@ class DiscordUser {
     getUser() {
         if (!this._validateInput([scopeList.identify])) return false;
         return req.request(endpoints.userMe, this.details.userId, {}, this._makeContext());
+    }
+
+    getUserGuilds() {
+        if (!this._validateInput([scopeList.identify, scopeList.guilds])) return false;
+        return req.request(endpoints.userGuilds, this.details.userId, {}, this._makeContext());
     }
 }
 

@@ -42,11 +42,24 @@ class DiscordBot {
             endpoints.modifyChannel,
             this.botId,
             {
-                bot: this.token,
                 params: {
                     channelId
                 },
                 body,
+            },
+            this._makeContext()
+        );
+    }
+
+    getGuild(guildId, withCounts) {
+        return req.request(
+            endpoints.getGuild,
+            this.botId,
+            {
+                params: {
+                    guildId,
+                    withCounts: (!!withCounts).toString()
+                }
             },
             this._makeContext()
         );
