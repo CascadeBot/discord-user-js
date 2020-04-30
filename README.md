@@ -257,13 +257,22 @@ user.getBot().then((res) => {
 Gets current user info
 
 ### **async DiscordBot.getGuild(guildId, withCounts)**
- - guildId: `String` - Guild id of the guild you want to get
+ - guildId: `String`
  - withCounts: `Boolean` - if to return with approximate user and presence counts
  - return value: `Promise`
     - Resolve: `Response`
     - Reject: `HttpError | Error`
 
 Gets guild data
+
+### **async DiscordBot.getMember(guildId, memberId)**
+ - guildId: `String`
+ - memberId: `String`
+ - return value: `Promise`
+    - Resolve: `Response`
+    - Reject: `HttpError | Error`
+
+Gets member data from guild
 
 # DiscordHooks
 

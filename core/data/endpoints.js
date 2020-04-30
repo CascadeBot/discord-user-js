@@ -39,6 +39,12 @@ const endpoints = {
         method: 'GET',
         id: "7"
     },
+    getGuildMember: {
+        path: "/guilds/:guildId:/members/:memberId:",
+        params: ["guildId", "memberId"],
+        method: 'GET',
+        id: "8"
+    },
 };
 
 module.exports = {

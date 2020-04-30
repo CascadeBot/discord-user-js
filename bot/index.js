@@ -64,6 +64,22 @@ class DiscordBot {
             this._makeContext()
         );
     }
+
+    getMember(guildId, memberId) {
+        return req.request(
+            endpoints.getGuildMember,
+            this.botId,
+            {
+                params: {
+                    guildId,
+                    memberId,
+                }
+            },
+            this._makeContext()
+        );
+    }
+
+
 };
 
 module.exports = {
