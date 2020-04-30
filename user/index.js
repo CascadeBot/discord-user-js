@@ -1,5 +1,6 @@
 const req = require("../core");
 const { endpoints } = require("../core/data/endpoints");
+const { makeOauthRequest } = require("../request/oauthRequest");
 const { refreshToken } = require("../oauth/refresh");
 const { revokeToken } = require("../oauth/revoke");
 
@@ -8,7 +9,9 @@ const scopeList = {
 };
 
 class DiscordUser {
-    constructor({accessToken, refreshToken, scopes}, userId) {
+
+    /* SETUP */
+    constructor({accessToken, refreshToken, scopes, userId}) {
         this.active = true;
         this.details = {
             accessToken,
@@ -17,7 +20,6 @@ class DiscordUser {
             userId: null
         }
         if (userId) this.details.userId = userId;
-
         this.refreshHook = null;
         this.revokeHook = null;
     }
@@ -62,32 +64,56 @@ class DiscordUser {
         return this.details;
     }
 
-    async logout() {
-        let success;
+    _validateInput(scopes) {
+        if (!this.active)
+            return false;
+        if (!this.details.userId)
+            return false;
+        for (let scope of scopes) {
+            if (!this.details.scopes.includes(scope))
+                return false;
+        }
+        return true;
+    }
+
+    /* root functions */
+    async setupUser() {
         try {
-            success = await revokeToken(this.details);
+            const res = await makeOauthRequest(endpoints.userMe, {}, this._makeContext());
+            this.details.userId = res.body.id;
+            return true;
         } catch (e) {
             return false;
         }
-        if (!success)
+    }
+
+    async logout() {
+        if (!this._validateInput([]))
             return false;
+        try {
+            const success = await revokeToken(this.details, {
+                ...this._makeContext(),
+                credentials: req.credentials
+            });
+            if (!success)
+                return false;
+        } catch (e) {
+            return false;
+        }
         this.details.accessToken = null;
         this.details.refreshToken = null;
         this.active = false;
         if (this.revokeHook) {
-            hookRes = this.revokeHook(this.details);
-            if (hookRes instanceof Promise) {
-                await hookRes;
+            try {
+                hookRes = this.revokeHook(this.details.userId);
+                if (hookRes instanceof Promise) {
+                    await hookRes;
+                }
+            } catch (e) {
+                return false;
             }
         }
-    }
-
-    getUser() {
-        if (!this.active)
-            return false;
-        if (!this.details.scopes.includes(scopeList.identify))
-            return false;
-        return req.request(endpoints.userMe, this.details.userId, {}, this._makeContext());
+        return true;
     }
 
     addHook(event, hook) {
@@ -101,7 +127,13 @@ class DiscordUser {
         }
         return false;
     }
-};
+
+    /* endpoints */
+    getUser() {
+        if (!this._validateInput([scopeList.identify])) return false;
+        return req.request(endpoints.userMe, this.details.userId, {}, this._makeContext());
+    }
+}
 
 module.exports = {
     DiscordUser

@@ -7,14 +7,11 @@ Part of [CascadeBot](https://github.com/CascadeBot/CascadeBot), A modular, costu
  - Multiple account usage
  - Proper ratelimits (per account, per route)
  - Discord rest api integration
+ - Automatic oauth token refresh
 
 ## Todo
- - [X] Ratelimits on 429 local
- - [X] Ratelimits on 429 global
- - [X] Automatic oauth token refreshing on 401
- - [X] Oauth change hook
  - [ ] More endpoints
- - [ ] Automatic user gathering if not specified
+ - [ ] Add documentation
 
 ## api reference
 coming soon

@@ -2,6 +2,7 @@ const req = require("../core");
 const { endpoints } = require("../core/data/endpoints");
 
 class DiscordBot {
+    /* SETUP */
     constructor(botToken, botId) {
         this.token = botToken;
         this.botId = null;
@@ -16,6 +17,11 @@ class DiscordBot {
         };
     }
 
+    addHook(event, hook) {
+        return false;
+    }
+
+    /* endpoints */
     getBot() {
         return req.request(endpoints.userMe, this.botId, {}, this._makeContext());
     }
@@ -33,10 +39,6 @@ class DiscordBot {
             },
             this._makeContext()
         );
-    }
-
-    addHook(event, hook) {
-        return false;
     }
 };
 

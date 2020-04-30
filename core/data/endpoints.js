@@ -21,6 +21,12 @@ const endpoints = {
         path: "/token",
         method: "POST",
         id: "4"
+    },
+    oauthRevoke: {
+        oauth: true,
+        path: "/token/revoke",
+        method: "POST",
+        id: "5"
     }
 };
 
