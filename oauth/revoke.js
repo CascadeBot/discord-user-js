@@ -1,5 +1,5 @@
 async function revokeToken(user) {
-    console.log(user.accessToken, user.refreshToken);
+    console.log("revoke fired", user.accessToken, user.refreshToken);
     return user;
 }
 

@@ -4,17 +4,20 @@ const { endpoints } = require("../core/data/endpoints");
 class DiscordBot {
     constructor(botToken, botId) {
         this.token = botToken;
-        this.botId = botId;
+        this.botId = null;
+        if (botId)
+            this.botId = botId;
     }
 
     _makeContext() {
-        return {};
+        return {
+            userType: "bot",
+            bot: this.token
+        };
     }
 
     getBot() {
-        return req.request(endpoints.userMe, this.botId, {
-            bot: this.token
-        }, this._makeContext());
+        return req.request(endpoints.userMe, this.botId, {}, this._makeContext());
     }
 
     editChannel(channelId, body) {
@@ -30,6 +33,10 @@ class DiscordBot {
             },
             this._makeContext()
         );
+    }
+
+    addHook(event, hook) {
+        return false;
     }
 };
 

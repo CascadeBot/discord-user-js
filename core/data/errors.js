@@ -1,6 +1,7 @@
 const errors = {
     errAbort: "Connection aborted",
     errIdGenFailed: "Random identifier generation failed",
+    errCredentials: "Credentials not set",
     httpError: "Http error"
 };
 

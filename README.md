@@ -11,8 +11,8 @@ Part of [CascadeBot](https://github.com/CascadeBot/CascadeBot), A modular, costu
 ## Todo
  - [X] Ratelimits on 429 local
  - [X] Ratelimits on 429 global
- - [ ] Automatic oauth token refreshing on 401
- - [ ] Oauth change hook
+ - [X] Automatic oauth token refreshing on 401
+ - [X] Oauth change hook
  - [ ] More endpoints
  - [ ] Automatic user gathering if not specified
 

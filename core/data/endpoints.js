@@ -15,6 +15,12 @@ const endpoints = {
         params: ["channelId"],
         method: "PATCH",
         id: "3"
+    },
+    oauthToken: {
+        oauth: true,
+        path: "/token",
+        method: "POST",
+        id: "4"
     }
 };
 
