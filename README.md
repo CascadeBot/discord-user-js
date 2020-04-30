@@ -38,7 +38,7 @@ async function start() {
     // DiscordUsers require credentials to be setup
     DiscordCore.setCredentials({
         client_id: "CLIENT_ID",
-        client_secret: "CLIENT_SECRET"
+        client_secret: "CLIENT_SECRET",
         redirect_uri: "REDIRECT_URI"
     })
 
@@ -79,10 +79,7 @@ start();
  - credentials: `Object`
     - client_id: `String` - client id for application
     - client_secret: `String` - client secret for application
-    - redirect_uri: `String` - one of the redirect uri's for the application
  - return value: `undefined` - has no return value
-
-**note:** redirect_uri is required and needs to be valid but wont be used for a redirect. (discord requirement)
 
 `DiscordCore.setCredentials()` is used for setting up credentials for the use of DiscordUsers. You wont need it if you only need to use bot endpoints.
 

@@ -28,8 +28,7 @@ function prepareRequest(endpoint, options, context) {
         options.body = {
             ...options.body,
             client_id: context.credentials.client_id,
-            client_secret: context.credentials.client_secret,
-            redirect_uri: context.credentials.redirect_uri
+            client_secret: context.credentials.client_secret
         }
     }
 

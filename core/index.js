@@ -9,11 +9,10 @@ class DiscordRequest {
         this.credentials = null;
     }
 
-    setCredentials({ client_id, client_secret, redirect_uri}) {
+    setCredentials({ client_id, client_secret }) {
         this.credentials = {
             client_id,
-            client_secret,
-            redirect_uri
+            client_secret
         };
     }
 
