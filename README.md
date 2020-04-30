@@ -96,8 +96,8 @@ DiscordCore.setCredentials({
 ```
 ---
 ## DiscordCore.addHook(event, hook)
- - event: `String` - event to hook onto, see `DiscordHooks` for all hooks
- - hook: `Function` - function to execute when event fires, see `DiscordHooks` for more info on the hooks
+ - event: `String` - event to hook onto, see [DiscordHooks](#DiscordHooks) for all hooks
+ - hook: `Function` - function to execute when event fires, see [DiscordHooks](#DiscordHooks) for more info on the hooks
  - return value: `Boolean` - returns `true` if succesfull, can only fail if you use a nonexistent event
 
 Used for setting up a global hook across all clients.
@@ -177,12 +177,22 @@ const success = await user.logout();
 
 ## Other methods
 All of the below methods are wrappers around the api. you can access the result by accessing `returnvalue.body`.
-Will throw httpErrors if something goes wrong.
+Will throw `HttpError` if something goes wrong with the request.
 
-### **async DiscordUser.getUser();**
+**example:**
+```JS
+user.getUser().then((res) => {
+    console.log(res.body) //=> user object
+    console.log(res.body.id) //=> userId
+}).catch((err) => {
+    console.error(err); //=> HttpError or Error
+});
+```
+
+### **async DiscordUser.getUser()**
  - return value: `Promise`
     - Resolve: `Response`
-    - Reject: `HttpError | Error`
+    - Reject: `HttpError || Error`
 Gets current user info
 
 # DiscordBot
@@ -222,9 +232,19 @@ Used for setting up a hook for this specific bot.
 
 ## Other methods
 All of the below methods are wrappers around the api. you can access the result by accessing `returnvalue.body`.
-Will throw httpErrors if something goes wrong.
+Will throw `HttpError` if something goes wrong.
 
-### **async DiscordBot.getBot();**
+**example:**
+```JS
+user.getBot().then((res) => {
+    console.log(res.body) //=> user object
+    console.log(res.body.id) //=> userId
+}).catch((err) => {
+    console.error(err); //=> HttpError or Error
+});
+```
+
+### **async DiscordBot.getBot()**
  - return value: `Promise`
     - Resolve: `Response`
     - Reject: `HttpError | Error`
