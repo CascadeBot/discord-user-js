@@ -1,11 +1,9 @@
 {
-  "name": "discordrest",
-  "version": "0.1.0",
-  "description": "Discord library to cover only the rest api",
+  "name": "discord-user-js",
+  "version": "0.2.0",
+  "description": "User based discord library",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "author": "mrjvs",
   "license": "MIT",
   "dependencies": {}

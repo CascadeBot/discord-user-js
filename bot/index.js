@@ -2,19 +2,39 @@ const req = require("../core");
 const { endpoints } = require("../core/data/endpoints");
 
 class DiscordBot {
-    constructor(botToken, botId) {
+    /* SETUP */
+    constructor(botToken, userId) {
         this.token = botToken;
-        this.botId = botId;
+        this.botId = null;
+        if (userId)
+            this.botId = userId;
     }
 
     _makeContext() {
-        return {};
+        return {
+            userType: "bot",
+            bot: this.token
+        };
     }
 
+    /* root functions */
+    addHook(event, hook) {
+        return false;
+    }
+
+    async setup() {
+        try {
+            const res = await makeOauthRequest(endpoints.userMe, {}, this._makeContext());
+            this.details.userId = res.body.id;
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    /* endpoints */
     getBot() {
-        return req.request(endpoints.userMe, this.botId, {
-            bot: this.token
-        }, this._makeContext());
+        return req.request(endpoints.userMe, this.botId, {}, this._makeContext());
     }
 
     editChannel(channelId, body) {
@@ -22,7 +42,6 @@ class DiscordBot {
             endpoints.modifyChannel,
             this.botId,
             {
-                bot: this.token,
                 params: {
                     channelId
                 },
@@ -31,6 +50,36 @@ class DiscordBot {
             this._makeContext()
         );
     }
+
+    getGuild(guildId, withCounts) {
+        return req.request(
+            endpoints.getGuild,
+            this.botId,
+            {
+                params: {
+                    guildId,
+                    withCounts: (!!withCounts).toString()
+                }
+            },
+            this._makeContext()
+        );
+    }
+
+    getMember(guildId, memberId) {
+        return req.request(
+            endpoints.getGuildMember,
+            this.botId,
+            {
+                params: {
+                    guildId,
+                    memberId,
+                }
+            },
+            this._makeContext()
+        );
+    }
+
+
 };
 
 module.exports = {

@@ -1,8 +1,16 @@
 const https = require("https");
 const { errors, HttpError } = require("../core/data/errors");
 const { makeOutput } = require("./helpers");
+const { beforeCall } = require("./prepare");
 
-async function callRequest(ops) {
+let failAuth = false;
+
+function failAuthNextCall() {
+    failAuth = true;
+}
+
+function callRequest(ops) {
+    beforeCall(ops);
     return new Promise((resolve, reject) => {
         let data = "";
         // TODO add user agent
@@ -14,6 +22,10 @@ async function callRequest(ops) {
 
             res.on('end', () => {
                 const output = makeOutput(res, ops.options, data);
+                if (failAuth) {
+                    failAuth = false;
+                    res.statusCode = 401;
+                }
                 if (res.statusCode >= 400 && res.statusCode <= 600) {
                     return reject(
                         new HttpError(errors.httpError, res.statusCode, output)
@@ -30,7 +42,7 @@ async function callRequest(ops) {
         req.once('error', (e) => {
             reject(e);
         });
-    
+
         if (ops.body) {
             req.write(ops.body);
         }
@@ -39,5 +51,6 @@ async function callRequest(ops) {
 }
 
 module.exports = {
-    callRequest
+    callRequest,
+    failAuthNextCall
 };
